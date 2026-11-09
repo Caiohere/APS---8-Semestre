@@ -117,6 +117,12 @@ def validar_residuo(dados):
         return "A quantidade deve ser um numero maior que zero"
     if not data_valida(dados.get("data"), "%Y-%m-%d"):
         return "Data invalida, use o formato AAAA-MM-DD"
+    if dados.get("fornecedor_id"):
+        con = banco.conectar()
+        existe = con.execute("SELECT id FROM fornecedores WHERE id = ?", (dados["fornecedor_id"],)).fetchone()
+        con.close()
+        if existe is None:
+            return "Fornecedor informado nao existe"
     return None
 
 

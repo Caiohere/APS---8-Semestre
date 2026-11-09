@@ -3,3 +3,4 @@ __pycache__/
 servidor/*.db
 *.pdf
 .vscode/
+!documentacao/*.pdf

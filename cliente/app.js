@@ -1,5 +1,7 @@
 // app.js - cliente que consome o web service do EcoGestao
-const API = "http://localhost:5000/api";
+// se a pagina foi aberta direto do arquivo usa o servidor local, senao usa o mesmo endereco
+const API = location.protocol === "file:" ? "http://localhost:5000/api" : "/api";
+document.getElementById("linkCsv").href = API + "/relatorios/residuos.csv";
 
 // funcao generica para chamar o web service
 async function chamarApi(caminho, metodo = "GET", corpo = null) {
@@ -35,6 +37,13 @@ function mostrarTela(id) {
     if (id === "fornecedores") carregarFornecedores();
 }
 
+// evita que textos digitados pelo usuario sejam interpretados como HTML
+function escapar(texto) {
+    const div = document.createElement("div");
+    div.textContent = texto;
+    return div.innerHTML;
+}
+
 function formatarData(data) {
     const p = data.split("-");
     return p.length === 3 ? `${p[2]}/${p[1]}/${p[0]}` : `${p[1]}/${p[0]}`;
@@ -63,15 +72,18 @@ async function carregarPainel() {
 }
 
 // ---------- residuos ----------
+let residuosCarregados = [];
+
 async function carregarResiduos() {
     const filtro = document.getElementById("filtroTipo").value;
     const lista = await chamarApi("/residuos" + (filtro ? "?tipo=" + filtro : ""));
     if (!lista) return;
+    residuosCarregados = lista;
     document.getElementById("tabelaResiduos").innerHTML = lista.map(r => `
         <tr>
             <td>${formatarData(r.data)}</td><td>${r.tipo}</td><td>${r.quantidade_kg}</td>
-            <td>${r.destino}</td><td>${r.fornecedor || "-"}</td>
-            <td><button onclick='editarResiduo(${JSON.stringify(r)})'>Editar</button>
+            <td>${r.destino}</td><td>${escapar(r.fornecedor || "-")}</td>
+            <td><button onclick="editarResiduo(${r.id})">Editar</button>
                 <button onclick="excluir('/residuos/${r.id}', carregarResiduos)">Excluir</button></td>
         </tr>`).join("");
 }
@@ -80,10 +92,11 @@ async function carregarFornecedoresSelect() {
     const lista = await chamarApi("/fornecedores");
     if (!lista) return;
     document.getElementById("fornecedorResiduo").innerHTML = '<option value="">Sem fornecedor</option>' +
-        lista.map(f => `<option value="${f.id}">${f.nome}</option>`).join("");
+        lista.map(f => `<option value="${f.id}">${escapar(f.nome)}</option>`).join("");
 }
 
-function editarResiduo(r) {
+function editarResiduo(id) {
+    const r = residuosCarregados.find(x => x.id === id);
     document.getElementById("residuoId").value = r.id;
     document.getElementById("tipo").value = r.tipo;
     document.getElementById("quantidade").value = r.quantidade_kg;
@@ -140,7 +153,7 @@ async function carregarFornecedores() {
     if (!lista) return;
     document.getElementById("tabelaFornecedores").innerHTML = lista.map(f => `
         <tr>
-            <td>${f.nome}</td><td>${f.cnpj}</td><td>${f.tipo}</td>
+            <td>${escapar(f.nome)}</td><td>${escapar(f.cnpj)}</td><td>${escapar(f.tipo)}</td>
             <td>${f.certificado_iso14001 ? "Sim" : "Não"}</td>
             <td><button onclick="excluir('/fornecedores/${f.id}', carregarFornecedores)">Excluir</button></td>
         </tr>`).join("");

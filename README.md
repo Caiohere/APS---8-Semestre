@@ -22,7 +22,9 @@ Para rodar os testes:
 
 ```bash
 cd servidor
-python test_api.py
+python test_api.py          # testes do web service (13 testes)
+pip install playwright
+python test_interface.py    # testes no navegador Edge/Chrome (7 testes)
 ```
 
 ## Endpoints
