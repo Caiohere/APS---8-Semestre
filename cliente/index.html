@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>EcoGestão - Gestão Ambiental ISO 14001</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>EcoGestão</h1>
+        <p>Sistema de gestão ambiental baseado na ISO 14001</p>
+        <nav>
+            <button onclick="mostrarTela('painel')">Painel</button>
+            <button onclick="mostrarTela('residuos')">Resíduos</button>
+            <button onclick="mostrarTela('consumos')">Água e Energia</button>
+            <button onclick="mostrarTela('fornecedores')">Fornecedores</button>
+        </nav>
+    </header>
+
+    <div id="mensagem"></div>
+
+    <!-- PAINEL / RELATORIO -->
+    <section id="painel" class="tela">
+        <h2>Painel de indicadores ambientais</h2>
+        <div class="cards">
+            <div class="card"><span id="totalResiduos">-</span><small>kg de resíduos gerados</small></div>
+            <div class="card"><span id="percReaproveitado">-</span><small>dos resíduos reaproveitados</small></div>
+            <div class="card"><span id="varAgua">-</span><small>variação no consumo de água</small></div>
+            <div class="card"><span id="varEnergia">-</span><small>variação no consumo de energia</small></div>
+            <div class="card"><span id="fornCertificados">-</span><small>fornecedores com ISO 14001</small></div>
+        </div>
+        <h3>Resíduos por tipo (kg)</h3>
+        <div id="grafico"></div>
+        <a class="botao" href="http://localhost:5000/api/relatorios/residuos.csv">Exportar resíduos em CSV</a>
+    </section>
+
+    <!-- RESIDUOS -->
+    <section id="residuos" class="tela">
+        <h2>Controle de resíduos</h2>
+        <form id="formResiduo">
+            <input type="hidden" id="residuoId">
+            <select id="tipo">
+                <option>Papel</option><option>Plastico</option><option>Vidro</option>
+                <option>Metal</option><option>Organico</option><option>Eletronico</option><option>Rejeito</option>
+            </select>
+            <input type="number" id="quantidade" placeholder="Quantidade (kg)" step="0.1">
+            <select id="destino">
+                <option>Reciclagem</option><option>Compostagem</option><option>Aterro</option>
+                <option>Incineracao</option><option>Reuso</option>
+            </select>
+            <input type="date" id="data">
+            <select id="fornecedorResiduo"></select>
+            <button type="submit">Salvar</button>
+        </form>
+        <label>Filtrar por tipo:
+            <select id="filtroTipo" onchange="carregarResiduos()">
+                <option value="">Todos</option>
+                <option>Papel</option><option>Plastico</option><option>Vidro</option>
+                <option>Metal</option><option>Organico</option><option>Eletronico</option><option>Rejeito</option>
+            </select>
+        </label>
+        <table>
+            <thead><tr><th>Data</th><th>Tipo</th><th>Qtd (kg)</th><th>Destino</th><th>Fornecedor</th><th>Ações</th></tr></thead>
+            <tbody id="tabelaResiduos"></tbody>
+        </table>
+    </section>
+
+    <!-- CONSUMOS -->
+    <section id="consumos" class="tela">
+        <h2>Consumo de água (m³) e energia (kWh)</h2>
+        <form id="formConsumo">
+            <select id="recurso"><option>Agua</option><option>Energia</option></select>
+            <input type="number" id="qtdConsumo" placeholder="Quantidade" step="0.1">
+            <input type="month" id="mes">
+            <button type="submit">Salvar</button>
+        </form>
+        <table>
+            <thead><tr><th>Mês</th><th>Recurso</th><th>Quantidade</th><th>Ações</th></tr></thead>
+            <tbody id="tabelaConsumos"></tbody>
+        </table>
+    </section>
+
+    <!-- FORNECEDORES -->
+    <section id="fornecedores" class="tela">
+        <h2>Fornecedores e parceiros (stakeholders)</h2>
+        <form id="formFornecedor">
+            <input type="text" id="nomeForn" placeholder="Nome">
+            <input type="text" id="cnpj" placeholder="CNPJ">
+            <input type="text" id="tipoForn" placeholder="Tipo de serviço">
+            <label><input type="checkbox" id="certificado"> Possui ISO 14001</label>
+            <button type="submit">Salvar</button>
+        </form>
+        <table>
+            <thead><tr><th>Nome</th><th>CNPJ</th><th>Serviço</th><th>ISO 14001</th><th>Ações</th></tr></thead>
+            <tbody id="tabelaFornecedores"></tbody>
+        </table>
+    </section>
+
+    <footer>APS - Ciência da Computação - UNIP</footer>
+    <script src="app.js"></script>
+</body>
+</html>
