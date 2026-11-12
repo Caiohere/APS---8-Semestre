@@ -4,3 +4,5 @@ servidor/*.db
 *.pdf
 .vscode/
 !documentacao/*.pdf
+*.jpeg
+*.jpg
