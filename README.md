@@ -50,7 +50,3 @@ Exemplo de cadastro com cURL:
 ```bash
 curl -X POST http://localhost:5000/api/residuos -H "Content-Type: application/json" -d "{\"tipo\":\"Vidro\",\"quantidade_kg\":12,\"destino\":\"Reciclagem\",\"data\":\"2026-11-05\"}"
 ```
-
-## Trabalho escrito
-
-O trabalho escrito (normas ABNT) está em `documentacao/`.
